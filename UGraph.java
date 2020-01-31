@@ -4,8 +4,10 @@ public class  UGraph{
     int numberOfVertices;
     int numberOfEdges;
     int choice;
-    int[][] graph;
+    String[][] graph;
     Scanner scan = new Scanner(System.in);
+
+    GraphTraversalsUGraph traverse = new GraphTraversalsUGraph();
 
     public UGraph(){
         // ASK FOR NUMBER OF VERTICES AND EDGES
@@ -26,7 +28,11 @@ public class  UGraph{
             System.out.println("6 - Insert an edge");
             System.out.println("7 - Remove an edge");
             System.out.println("8 - Insert a vertex");
-            System.out.println("9 - Remove a vertex\n");;
+            System.out.println("9 - Remove a vertex");
+
+            System.out.println("TRAVERSALS\n");
+            System.out.println("10 - Breadth-first");
+            System.out.println("11 - Depth-first");
             
             System.out.print("CHOICE (Choose 0 to EXIT): ");
             choice = scan.nextInt();
@@ -57,6 +63,10 @@ public class  UGraph{
                 case 0:
                     System.exit(0);
                     break;
+                case 10:
+                    break;
+                case 11:
+                    break;
             }
             System.out.println("----------------------------");
         }while(choice != 0);
@@ -84,8 +94,8 @@ public class  UGraph{
                 j = scan.nextInt();
             }while(j > numberOfVertices || j <= 0 || j == i);
 
-            graph[i-1][j-1] = 1;
-            graph[j-1][i-1] = 1;
+            graph[i-1][j-1] = "1";
+            graph[j-1][i-1] = "1";
 
             System.out.println("\nAn edge is inserted");
         }
@@ -100,24 +110,23 @@ public class  UGraph{
             System.out.println("BINARY RELATION:");
             for(int i = 0; i < numberOfVertices; i++){
                 for(int j = 0; j < numberOfVertices; j++){
-                    if(graph[i][j] == 1 && i <= j)
+                    if(graph[i][j] == "1" && i <= j)
                         System.out.print("(" + (i + 1) + ", " + (j + 1) + ") ");
                 }
             }
-
-            // ADJACENCY MATRIX
-            System.out.println("\n\nADJACENCY MATRIX:");
-            for(int i = 0; i <= numberOfVertices; i++)
-                System.out.print(i + " ");
+        }
+        // ADJACENCY MATRIX
+        System.out.println("\n\nADJACENCY MATRIX:");
+        for(int i = 0; i <= numberOfVertices; i++)
+            System.out.print(i + " ");
            
-            System.out.println("");
+        System.out.println("");
 
-            for(int i = 0; i < numberOfVertices; i++){
-                System.out.print(i + 1 + " ");
-                for(int j = 0; j < numberOfVertices; j++)
-                    System.out.print(graph[i][j] + " ");
-                System.out.println("");
-            }
+        for(int i = 0; i < numberOfVertices; i++){
+            System.out.print(i + 1 + " ");
+            for(int j = 0; j < numberOfVertices; j++)
+                System.out.print(graph[i][j] + " ");
+            System.out.println("");
         }
     }
 
@@ -127,8 +136,13 @@ public class  UGraph{
             numberOfVertices = scan.nextInt();
         }while(numberOfVertices < 0);
 
-        if(numberOfVertices > 0)
-            graph = new int[numberOfVertices][numberOfVertices];
+        if(numberOfVertices > 0){
+            graph = new String[numberOfVertices][numberOfVertices];
+            
+            for(int i = 0; i < numberOfVertices; i++)
+                for(int j = 0; j < numberOfVertices; j++)
+                    graph[i][j] = "0";
+        }
         
         /*for(int i = 0; i <= numberOfVertices; i++)
             System.out.print(i + " ");
