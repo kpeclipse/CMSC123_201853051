@@ -32,7 +32,10 @@ public class  UGraph{
         }while(i < vertices);
 
         // SET OF VERTICES
+<<<<<<< HEAD
         System.out.print("V = {")
+=======
+>>>>>>> parent of 0b21676... UGraph draft 2
         do{
 
         }
