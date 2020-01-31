@@ -1,0 +1,7 @@
+JAN 31, 2020
+3 commits
+    - on the period (Commit Message Format) LABXX_ON_[FINAL]
+    - 11:59 PM Same Day (Commit Message Format) LABXX_DAY_[FINAL]
+    - Final Commit LABXX_[FINAL]
+
+Graphs needed are Undirected Directed Weighted Unweighted

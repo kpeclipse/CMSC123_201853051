@@ -93,7 +93,7 @@ public class  UGraph{
 
     public void showList(){
         if(numberOfEdges == 0)
-            System.out.println("NULL GRAPH! (no edges)");
+            System.out.println("NULL GRAPH (no edges)");
 
         else{
             // BINARY RELATION
@@ -106,7 +106,7 @@ public class  UGraph{
             }
 
             // ADJACENCY MATRIX
-            System.out.println("\nADJACENCY MATRIX:");
+            System.out.println("\n\nADJACENCY MATRIX:");
             for(int i = 0; i <= numberOfVertices; i++)
                 System.out.print(i + " ");
            
