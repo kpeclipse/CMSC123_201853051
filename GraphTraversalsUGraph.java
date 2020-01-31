@@ -1,34 +1,51 @@
 import java.util.*;
 
 public class GraphTraversalsUGraph{
-    String[] nodes;
-    String[] sequence;
-    String[][] checkGraph;
-    int nodeIndex = 0;
-    String visted = "visited";
+    String[][] unweighted;
+    int[][] weighted;
+    boolean[] vertices;
+    int start;
+
+    Scanner scan = new Scanner(System.in);
 
     public void depthFirst(String[][] graph, int vertices){
 
     }
 
-    public void breadthFirst(String[][] graph, int vertices){
-        int i;
-        int j;
+    public void depthFirst(int[][] graph, int vertices){
 
-        nodes = new String[vertices];
-        sequence = new String[vertices];
-        checkGraph = graph;
-
-        // 1 as first marked node
-        for(i = 0; i < vertices; i++)
-            for(j = 0; j < vertices; i++)
-                if(graph[i][j] == "1" && checkGraph[i][j] != visited){
-                    enqueue(Int.toString(i + 1));
-                }
     }
 
-    public void enqueue(String node){
-        nodes[nodeIndex] = node;
-        nodeIndex += 1;
+    public void breadthFirst(String[][] graph, int vertices){
+        int i;
+
+        this.vertices = new boolean[vertices];
+        unweighted = graph;
+
+        do{
+            System.out.print("\nFirst Marked Vertex: ");
+            start = scan.nextInt();
+        }while(start > vertices || start <= 0);
+
+        Queue<Integer> sequence = new LinkedList<Integer>();
+
+        sequence.add(start);
+        
+        System.out.print("BREADTH FIRST SEQUENCE: ");
+
+        while(sequence.isEmpty() == false){
+            int dequeue = sequence.poll();
+            System.out.print(dequeue + " ");
+            this.vertices[dequeue] = true;
+            for(i = 0; i < vertices; i++)
+                if(unweighted[dequeue][i] == "T" && (this.vertices[i]) == false)
+                    sequence.add(i);
+                    
+
+        }
+    }
+
+    public void breadthFirst(int[][] graph, int vertices){
+        weighted = graph;
     }
 }
