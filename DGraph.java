@@ -18,25 +18,28 @@ public class DGraph{
     }
 
     public void showList(boolean weighted){
+        // WHEN THERE ARE NO VERTICES
         if(numberOfVertices == 0)
             System.out.println("NO GRAPH");
 
+        // WHEN THERE IS AT LEAST ONE VERTEX
         else{
-            System.out.print("\nVertices: (");
-        
+            // SHOW LIST OF VERTICES
+            System.out.print("\nVertices In Order: (");
             for(int i = 0; i < vertices.size() - 1; i++)
                 System.out.print(vertices.get(i).name + ", ");
             System.out.print(vertices.get(vertices.size()-1).name + ")\n");
 
             // SHOW LIST OF VERTICES WITH IN-DEGREE OF ZERO
-            System.out.print("Vertices with in-degree of ZERO: (");
-            for(int x = 0; x < zeroInDegreeVertices.size() - 1; x++)
-                System.out.print(zeroInDegreeVertices.get(x).name +",");
-            System.out.print(zeroInDegreeVertices.get(zeroInDegreeVertices.size() - 1).name + ")\n");
-
+            if(zeroInDegreeVertices.size() > 0){
+                System.out.print("Vertices with in-degree of ZERO: (");
+                for(int x = 0; x < zeroInDegreeVertices.size() - 1; x++)
+                    System.out.print(zeroInDegreeVertices.get(x).name +",");
+                System.out.print(zeroInDegreeVertices.get(zeroInDegreeVertices.size() - 1).name + ")\n");
+            }
 
             // ADJACENCY MATRIX --- Default display of graph
-            System.out.println("\nADJACENCY MATRIX:");
+            System.out.println("\nADJACENCY MATRIX: (Order is based on list of vertices)");
             
             for(int i = 0; i <= numberOfVertices; i++){
                 if(i == 0){
@@ -66,7 +69,8 @@ public class DGraph{
                 }
                 System.out.println("");
             }
-        
+            
+            // SHOW LIST OF ADJACENT VERTICES
             if(numberOfEdges == 0)
                 System.out.println("\nNULL GRAPH (no edges)");
 
@@ -166,7 +170,8 @@ public class DGraph{
 
         numberOfEdges += 1;
 
-        if(numberOfEdges > ((numberOfVertices * (numberOfVertices-1))/2)){
+        // IF THE CURRENT NUMBER OF EDGES HAS REACHED THE MAXIMUM NUMBER OF EDGES FOR DIRECTED GRAPH
+        if(numberOfEdges > (numberOfVertices * (numberOfVertices - 1))){
             System.out.println("MAXIMUM NUMBER OF EDGES REACHED!");
             numberOfEdges -= 1;
         }
@@ -177,6 +182,7 @@ public class DGraph{
             for(int x = 0; x < vertices.size(); x++)
                 System.out.print(vertices.get(x).name + " ");
             
+            // WHILE AN EDGE ALREADY EXISTS BETWEEN PARTICULAR VERTICES
             do{
                 // ASK FOR FIRST VERTEX
                 do{
@@ -222,6 +228,7 @@ public class DGraph{
         int firstV = -1;
         int secondV = -1;
 
+        // IF THERE ARE NO EDGES
         if(numberOfEdges == 0)
             System.out.println("NULL GRAPH! (no edges)");
 
@@ -311,9 +318,9 @@ public class DGraph{
                         uwGraph[i][j] = uwTemp[i][j];   
             }
         }
-        
         Node addVertex = new Node(name);
         vertices.add(addVertex);
+        zeroInDegreeVertices.add(addVertex);
         System.out.println("\nVertex " + name + " is inserted");
     }
 

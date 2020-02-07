@@ -90,10 +90,15 @@ public class GraphTester{
                     break;
                 case 12:
                     if(d == true)
+                        topologicalSort(dGraph);
                     break;
             }
             System.out.println("\n----------------------------");
         }while(choice != 0);
+    }
+
+    public void topologicalSort(DGraph G){
+        System.out.println("POSSIBLE TOPOLOGICAL SORTS: ");
     }
     
     public boolean UorDGraph() {
