@@ -7,15 +7,92 @@ public class GraphTester{
     boolean weighted;
 
     UGraph uGraph;
+    DGraph dGraph;
 
     public GraphTester(){
         System.out.println("GRAPH TESTER\n");
-        do{
-            directed = UorDGraph();
-            weighted = UorWGraph();
+        directed = UorDGraph();
+        weighted = UorWGraph();
 
-            if(directed == false)
-                uGraph = new UGraph(weighted);
+        if(directed == false)
+            uGraph = new UGraph();
+        else dGraph = new DGraph();
+
+        mainMenu(directed, weighted);
+    }
+
+    public void mainMenu(boolean d, boolean w){
+        do{
+            System.out.println("\n1 - Number of Vertices");
+            System.out.println("2 - Number of Edges");
+            System.out.println("3 - List of Vertices adjacent to a given vertex");
+            System.out.println("4 - Check if two vertices are adjacent or not");
+            System.out.println("5 - Check if two vertices are connected or not");
+            System.out.println("6 - Insert an edge");
+            System.out.println("7 - Remove an edge");
+            System.out.println("8 - Insert a vertex");
+            System.out.println("9 - Remove a vertex");
+            System.out.println("10 - Breadth-first");
+            System.out.println("11 - Depth-first");
+            
+            if(d == true)
+                System.out.println("12 - Topological Sort");
+                
+            System.out.print("\nCHOICE (Choose 0 to EXIT): ");
+            choice = scan.nextInt();
+            
+            switch(choice){
+                case 0:
+                    System.exit(0);
+                    break;
+                case 1:
+                    if(d == false)
+                        System.out.println("\nNumber of Vertices: " + uGraph.numberOfVertices);
+                    else System.out.println("\nNumber of Vertices: " + dGraph.numberOfVertices);
+                    break;
+                case 2:
+                    if(d == false)
+                        System.out.println("\nNumber of Edges: " + uGraph.numberOfEdges);
+                    else System.out.println("\nNumber of Edges: " + dGraph.numberOfEdges);
+                    break;
+                case 3:
+                    if(d == false)
+                        uGraph.showList(weighted);
+                    else dGraph.showList(weighted);
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    if(d == false)
+                        uGraph.insertEdge(weighted);
+                    else dGraph.insertEdge(weighted);
+                    break;
+                case 7:
+                    if(d == false)
+                        uGraph.removeEdge(weighted);
+                    else dGraph.removeEdge(weighted);
+                    break;
+                case 8:
+                    if(d == false)
+                        uGraph.insertVertex(weighted);
+                    else dGraph.insertVertex(weighted);
+                    break;
+                case 9:
+                    if(d == false)
+                        uGraph.removeVertex(weighted);
+                    else dGraph.removeVertex(weighted);
+                    break;
+                case 10:
+                    break;
+                case 11:
+                    break;
+                case 12:
+                    if(d == true)
+                    break;
+            }
+            System.out.println("\n----------------------------");
         }while(choice != 0);
     }
     
