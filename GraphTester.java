@@ -5,6 +5,7 @@ public class GraphTester{
     int choice;
     boolean directed;
     boolean weighted;
+    int[] pathLength;
 
     UGraph uGraph;
     DGraph dGraph;
@@ -21,6 +22,7 @@ public class GraphTester{
         mainMenu(directed, weighted);
     }
 
+    // DISPLAYS MAIN MENU
     public void mainMenu(boolean d, boolean w){
         do{
             System.out.println("\n1 - Number of Vertices");
@@ -34,9 +36,10 @@ public class GraphTester{
             System.out.println("9 - Remove a vertex");
             System.out.println("10 - Breadth-first");
             System.out.println("11 - Depth-first");
+            System.out.println("12 - SSUPL");
             
             if(d == true)
-                System.out.println("12 - Topological Sort");
+                System.out.println("13 - Topological Sort");
                 
             System.out.print("\nCHOICE (Choose 0 to EXIT): ");
             choice = scan.nextInt();
@@ -85,22 +88,28 @@ public class GraphTester{
                     else dGraph.removeVertex(weighted);
                     break;
                 case 10:
+                    if(d == false)
+                        uGraph.breadthFirst();
+                    else dGraph.breadthFirst();
                     break;
                 case 11:
+                    if(d == false)
+                        uGraph.depthFirst();
+                    else dGraph.depthFirst();
                     break;
                 case 12:
-                    if(d == true)
-                        topologicalSort(dGraph);
+                    if(d == false){
+                        new SSUPL(uGraph);
+                    }
+                    else new SSUPL(dGraph);
                     break;
+                case 13:
             }
             System.out.println("\n----------------------------");
         }while(choice != 0);
     }
-
-    public void topologicalSort(DGraph G){
-        System.out.println("POSSIBLE TOPOLOGICAL SORTS: ");
-    }
     
+    // ASKS IF DIRECTED OR UNDIRECTED
     public boolean UorDGraph() {
         boolean DGraph = false;
 
@@ -109,7 +118,7 @@ public class GraphTester{
             System.out.println("1 - Undirected Graph");
             System.out.println("2 - Directed Graph\n");
 
-            System.out.print("Choice: ");
+            System.out.print("Choice (Press 0 to EXIT): ");
             choice = scan.nextInt();
 
             if(choice == 0)
@@ -122,24 +131,26 @@ public class GraphTester{
                 DGraph = true;
                 break;
             }
-        }while(choice != 1 || choice != 2 || choice != 0);
+            System.out.println();
+        }while(choice > 2 || choice < 0);
 
         return DGraph;
     }
 
+    // ASKS IF WEIGHTED OR UNWEIGHTED
     public boolean UorWGraph() {
         boolean WGraph = false;
-        
         do{
-            System.out.println("\nUnweighted or Weighted?");
+            System.out.println("Unweighted or Weighted?");
             System.out.println("1 - Unweighted Graph");
             System.out.println("2 - Weighted Graph\n");
 
-            System.out.print("Choice: ");
+            System.out.print("Choice (Press 0 to EXIT): ");
             choice = scan.nextInt();
 
             if(choice == 0)
                 System.exit(0);
+
             else if(choice == 1){
                 WGraph = false;
                 break;
@@ -148,7 +159,9 @@ public class GraphTester{
                 WGraph = true;
                 break;
             }
-        }while(choice != 1 || choice != 2 || choice != 0);
+
+            System.out.println();
+        }while(choice > 2 || choice < 0);
 
         return WGraph;
     }

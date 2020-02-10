@@ -1,3 +1,4 @@
+package PaperCoding;
 import java.util.*;
 
 public class PC02{
