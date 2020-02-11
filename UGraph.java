@@ -433,15 +433,12 @@ public class UGraph{
         boolean[] visited;
         boolean exists = false;
         boolean allAreVisited = true;
-        LinkedList<String> queue = new LinkedList<String>();
-        int index = 0;
-        
-        // If there is at least one vertex
+        Queue<Node> queue = new LinkedList<Node>();
+
         if(numberOfVertices > 0){
             showListOfVertices();
             visited = new boolean[vertices.size()];
 
-            // Checks if vertex exists
             do{
                 // Ask for Source Vertex
                 System.out.print("\nChoose Source Vertex: ");
@@ -450,47 +447,42 @@ public class UGraph{
                 for(int i = 0; i < vertices.size(); i++){
                     if(vertices.get(i).name.contains(vertex)){
                         exists = true;
-                        visited[i] = true;  // Marked as visited vertex
-                        index = i;
-                        queue.add(vertices.get(i).name); // Enqueue source vertex in queue
+                        visited[i] = true;
+                        queue.add(vertices.get(i));
                         break;
                     }
                 }
 
                 if(exists == true){
-                    // BFS until all vertices are visited
                     do{
                         while(queue.size() > 0){
-                            String print = queue.poll();
-                            System.out.print(print + " ");
-            
-                            Iterator<Node> list = vertices.get(index).adjacentVertices.listIterator();
-                           
+                            Node dequeue = queue.remove();
+                            System.out.print(dequeue.name + " ");
+    
+                            Iterator<Node> list = dequeue.adjacentVertices.listIterator();
+    
                             while(list.hasNext()){
-                                Node i = list.next();
-                                
-                                if(visited[vertices.indexOf(i)] == false){
-                                    visited[vertices.indexOf(i)] = true;
-                                    index = vertices.indexOf(i);
-                                    queue.add(i.name);
+                                Node enqueue = list.next();
+                                while(visited[vertices.indexOf(enqueue)] == false){
+                                    queue.add(enqueue);
+                                    visited[vertices.indexOf(enqueue)] = true;
                                 }
                             }
                         }
-
-                        // In Case Queue is Empty but there are unvisited vertices
-                        allAreVisited = true;
-                        for(int i = 0; i < visited.length; i++){
-                            if(visited[i] == false){
-                                allAreVisited = false;
-                                visited[i] = true;
-                                index = i;
-                                queue.add(vertices.get(i).name); // Enqueue unvisited vertex
-                                break;
-                            }
+                        
+                        if(queue.isEmpty()){
+                            allAreVisited = true;
+                            for(int i = 0; i < visited.length; i++)
+                                if(visited[i] == false){
+                                    allAreVisited = false;
+                                    queue.add(vertices.get(i));
+                                    break;
+                                }
                         }
-                    }while(allAreVisited != true);
+                    }while(allAreVisited == false);
                 }
             }while(exists == false);
+
         }
 
         else System.out.println("\nNO VERTEX\n");
@@ -530,7 +522,7 @@ public class UGraph{
     
                             while(list.hasNext()){
                                 Node push = list.next();
-                                if(visited[vertices.indexOf(push)] == false){
+                                while(visited[vertices.indexOf(push)] == false){
                                     stack.push(push);
                                     visited[vertices.indexOf(push)] = true;
                                 }

@@ -12,10 +12,10 @@ public class PC01{
     }
 
     public void triangle(int k){
-        for(int i = 0; i <= k; i++){
+        for(int i = 0; i < k; i++){
             for(int j = k; j > i; j--)
                 System.out.print(" ");
-            for(int z = 1; z <= i; z++)
+            for(int z = 0; z <= i; z++)
                 System.out.print("* ");
             System.out.println("");
         }
