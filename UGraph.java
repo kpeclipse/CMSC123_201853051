@@ -6,7 +6,7 @@ public class UGraph{
     String[][] uwGraph;
     int[][] wGraph;
     ArrayList<Node> vertices;
-    ArrayList<WeightedEdge> edges;
+    ArrayList<Edge> edges;
     Scanner scanInt = new Scanner(System.in);
     Scanner scanString = new Scanner(System.in);
 
@@ -206,10 +206,10 @@ public class UGraph{
                 }while(value <= 0);
 
                 // Create new weighted edge
-                WeightedEdge edge = new WeightedEdge(vertices.get(firstV), vertices.get(secondV), value);
+                Edge edge = new Edge(vertices.get(firstV), vertices.get(secondV), value);
                 
                 if(edges == null)
-                    edges = new ArrayList<WeightedEdge>();
+                    edges = new ArrayList<Edge>();
 
                 // Add new edge to list of edges
                 edges.add(edge);
