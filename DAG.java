@@ -12,7 +12,92 @@ public class DAG{
         System.out.println("\nDIRECTED ACYCLIC GRAPH");
     }
 
-    public void showList(boolean weighted){}
+    public void showList(boolean weighted){
+        // If there are no vertices
+        if(vertices.size() == 0 || vertices == null)
+            System.out.println("NO GRAPH");
+
+        // If there is at least one vertex
+        else{
+            // List of Vertices
+            System.out.print("\nVertices In Order: (");
+            for(int i = 0; i < vertices.size() - 1; i++)
+                System.out.print(vertices.get(i).name + ", ");
+            System.out.print(vertices.get(vertices.size()-1).name + ")\n");
+
+            // ADJACENCY MATRIX --- Default display of graph
+            System.out.println("\nADJACENCY MATRIX: (Order is based on list of vertices)\n");
+            for(int i = 0; i < vertices.size(); i++){    
+                System.out.print("\t");
+                for(int j = 0; j < vertices.size(); j++){
+                    // If there is an edge
+                    if(vertices.get(i).adjacentVertices.contains(vertices.get(j))){
+                        // For Unweighted Graph
+                        if(weighted == false){
+                            uwDAG[i][j] = "T";
+                            System.out.print("[" + uwDAG[i][j] + "]");
+                        }
+                        // For Weighted Graph
+                        else{
+                            for(int k = 0; k < edges.size(); k++){
+                                if(edges.get(k).first == vertices.get(i) && edges.get(k).second == vertices.get(j))
+                                    wDAG[i][j] = edges.get(k).value;
+                            }
+                            System.out.print("[" + wDAG[i][j] + "]");
+                        }
+                    }
+        
+                    // If there is no edge
+                    else{
+                        // For Unweighted Graph
+                        if(weighted == false){
+                            uwDAG[i][j] = "F";
+                            System.out.print("[" + uwDAG[i][j] + "]");
+                        }
+                        // For Weighted Graph
+                        else{
+                            wDAG[i][j] = 0;
+                            System.out.print("[" + wDAG[i][j] + "]");
+                        }
+                    }
+                }
+                System.out.println("");
+            }
+
+
+            // Show list of adjacent vertices
+
+            if(edges.size() == 0)
+
+                System.out.println("\nNULL GRAPH (no edges)");
+
+
+            else{
+    // NAIVE OR BINARY RELATION (V1, V2)
+    System.out.println("\nBINARY RELATION:");
+    for(int i = 0; i < vertices.size(); i++){
+        for(int j = 0; j < vertices.size(); j++){
+            if(vertices.get(i).adjacentVertices.contains(vertices.get(j)))
+                System.out.print("(" + vertices.get(i).name + ", " + vertices.get(j).name + ") ");
+        }
+    }
+    
+    // ADJACENCY LIST
+    System.out.println("\n\nADJACENCY LIST:\n");
+    for(int i = 0; i < vertices.size(); i++){
+        System.out.print(vertices.get(i).name + " * ");
+        for(int j = 0; j < vertices.get(i).adjacentVertices.size(); j++){
+            System.out.print("--> " + vertices.get(i).adjacentVertices.get(j).name + " ");
+        }
+        System.out.println();       
+    }
+}
+}
+
+
+
+
+    }
     public void insertEdge(boolean weighted){}
     public void removeEdge(boolean weighted){}
 
