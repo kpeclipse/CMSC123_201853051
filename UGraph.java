@@ -579,6 +579,7 @@ public class UGraph{
         }
     }
     
+    // Lab 2
     public void breadthFirst(boolean withET){
         boolean[] visited;
         boolean exists = false;

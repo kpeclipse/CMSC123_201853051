@@ -606,7 +606,7 @@ public class DGraph{
     }
     
     // Lab 2
-    /*public void breadthFirst(boolean withET){
+    public void breadthFirst(boolean withET){
         boolean[] visited;
         boolean exists = false;
         boolean allAreVisited = true;
@@ -722,6 +722,6 @@ public class DGraph{
             }while(exists == false);
         }
         else System.out.println("\nNO VERTEX\n");        
-    }*/
+    }
 
 }
