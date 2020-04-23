@@ -150,10 +150,10 @@ public class GraphTester{
                         new TopologicalSort(dGraph);
                     break;
 
-                // Lab 5
+                // Lab 5 and Lab 6
                 case 14:
                     if(d == true)
-                        new CriticalPath(dGraph, e);
+                        new CriticalPath(dGraph, w, e);
                     break;
 
                 // Lab 7

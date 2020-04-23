@@ -10,10 +10,11 @@ class CriticalPath {
     double[] criticalTime;
     String[] prevTask;
     LinkedList<Vertex> queue = new LinkedList<Vertex>();
+    boolean weighted;
 
-    public CriticalPath (DGraph G, boolean withET) {
-        initialize(G, withET);
-        if(withET == true){
+    public CriticalPath (DGraph G, boolean weighted, boolean withET) {
+        initialize(G, weighted, withET);
+        if(weighted == true || withET == true){
             result = findCriticalPath(G);
 
             if(result != null){
@@ -66,7 +67,17 @@ class CriticalPath {
                 }
 
                 if(doChange == true){
-                    criticalTime[G.vertices.indexOf(adjVertex)] = criticalTime[index];
+                    double edgeWeight = 0;
+
+                    if(weighted == true){
+                        for(int i = 0; i < G.edges.size(); i++){
+                            if(G.edges.get(i).first == dequeue && G.edges.get(i).second == adjVertex){
+                                edgeWeight = G.edges.get(i).value;
+                                break;
+                            }
+                        }
+                    }
+                    criticalTime[G.vertices.indexOf(adjVertex)] = criticalTime[index] + edgeWeight;
                     prevTask[G.vertices.indexOf(adjVertex)] = dequeue.name;
                 }
     
@@ -146,13 +157,14 @@ class CriticalPath {
     }
 
     // Initializing tables
-    public void initialize(DGraph G, boolean withET){
-        // If vertices have no weight
-        if(withET == false)
+    public void initialize(DGraph G, boolean weighted, boolean withET){
+        // If both edges and vertices have no weight
+        if(withET == false && weighted == false)
             System.out.print("CANNOT FIND CRITICAL TIME");        
 
         else{
             numberOfVertices = G.vertices.size();
+            this.weighted = weighted;
             visited = new boolean[numberOfVertices];
             indegree = new int[numberOfVertices];
             taskTime = new double[numberOfVertices];
