@@ -157,11 +157,11 @@ public class GraphTester{
                     break;
 
                 // Lab 7
-                /*case 15:
+                case 15:
                     if(d == true && w == true)
                         new floydWarshall(dGraph);
                     else System.out.print("GRAPH IS UNWEIGHTED AND/OR UNDIRECTED!");
-                    break;*/
+                    break;
             }
 
             System.out.println("\n----------------------------");
