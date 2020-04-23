@@ -1,17 +1,17 @@
 class Edge{
-    Node first;
-    Node second;
-    int value;
+    Vertex first;
+    Vertex second;
+    double value;
 
     // With Weight
-    public Edge(Node f, Node s, int v){
+    public Edge(Vertex f, Vertex s, double v){
         first = f;
         second = s;
         value = v;
     }
 
     // Without Weight
-    public Edge(Node f, Node s){
+    public Edge(Vertex f, Vertex s){
         first = f;
         second = s;
     }

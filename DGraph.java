@@ -1,353 +1,387 @@
 import java.util.*;
 
 public class DGraph{
-    int numberOfVertices;
-    int numberOfEdges;
     String[][] uwGraph;
-    int[][] wGraph;
-    ArrayList<Node> vertices;
-    ArrayList<Node> zeroInDegreeVertices;
+    double[][] wGraph;
+    ArrayList<Vertex> vertices;
     ArrayList<Edge> edges;
+    ArrayList<Vertex> zeroInDegreeVertices;
     Scanner scanInt = new Scanner(System.in);
     Scanner scanString = new Scanner(System.in);
+    Scanner scanDouble = new Scanner(System.in);
+    Edge edge;
+    boolean ExecutionTime;
+    CPResult criticalPath;
 
     public DGraph(){
-        System.out.println("DIRECTED GRAPH");
+        System.out.println("\nDIRECTED GRAPH");
     }
 
-    public void showList(boolean weighted){
+    public void showList(boolean weighted, boolean withET){
         // If there are no vertices
-        if(numberOfVertices == 0)
+        if(vertices == null || vertices.size() == 0)
             System.out.println("NO GRAPH");
 
         // If there is at least one vertex
         else{
-            // List of Vertices
-            System.out.print("\nVertices In Order: (");
-            for(int i = 0; i < vertices.size() - 1; i++)
-                System.out.print(vertices.get(i).name + ", ");
-            System.out.print(vertices.get(vertices.size()-1).name + ")\n");
-
-            // List of Vertices with in-degree of zero
-            if(zeroInDegreeVertices.size() > 0){
-                System.out.print("Vertices with in-degree of ZERO: (");
-                for(int x = 0; x < zeroInDegreeVertices.size() - 1; x++)
-                    System.out.print(zeroInDegreeVertices.get(x).name +", ");
-                System.out.print(zeroInDegreeVertices.get(zeroInDegreeVertices.size() - 1).name + ")\n");
-            }
-
-            // ADJACENCY MATRIX --- Default display of graph
-            System.out.println("\nADJACENCY MATRIX: (Order is based on list of vertices)\n");
-            for(int i = 0; i < numberOfVertices; i++){    
-                System.out.print("\t");
-                for(int j = 0; j < numberOfVertices; j++){
-                    // If there is an edge
-                    if(vertices.get(i).adjacentVertices.contains(vertices.get(j))){
-                        // For Unweighted Graph
-                        if(weighted == false){
-                            uwGraph[i][j] = "T";
-                            System.out.print("[" + uwGraph[i][j] + "]");
-                        }
-                        // For Weighted Graph
-                        else{
-                            for(int k = 0; k < edges.size(); k++){
-                                if(edges.get(k).first == vertices.get(i) && edges.get(k).second == vertices.get(j))
-                                    wGraph[i][j] = edges.get(k).value;
-                            }
-                            System.out.print("[" + wGraph[i][j] + "]");
-                        }
-                    }
-                    // If there is no edge
-                    else{
-                        // For Unweighted Graph
-                        if(weighted == false){
-                            uwGraph[i][j] = "F";
-                            System.out.print("[" + uwGraph[i][j] + "]");
-                        }
-                        // For Weighted Graph
-                        else{
-                            wGraph[i][j] = 0;
-                            System.out.print("[" + wGraph[i][j] + "]");
-                        }
-                    }
-                }
-                System.out.println("");
-            }
-            
-            // Show list of adjacent vertices
-            if(numberOfEdges == 0)
-                System.out.println("\nNULL GRAPH (no edges)");
-
-            else{
-                // NAIVE OR BINARY RELATION (V1, V2)
-                System.out.println("\nBINARY RELATION:");
-                for(int i = 0; i < numberOfVertices; i++){
-                    for(int j = 0; j < numberOfVertices; j++){
-                        if(vertices.get(i).adjacentVertices.contains(vertices.get(j)))
-                            System.out.print("(" + vertices.get(i).name + ", " + vertices.get(j).name + ") ");
-                    }
-                }
-                
-                // ADJACENCY LIST
-                System.out.println("\n\nADJACENCY LIST:\n");
-                for(int i = 0; i < vertices.size(); i++){
-                    System.out.print(vertices.get(i).name + " * ");
-                    for(int j = 0; j < vertices.get(i).adjacentVertices.size(); j++){
-                        System.out.print("--> " + vertices.get(i).adjacentVertices.get(j).name + " ");
-                    }
-                    System.out.println();       
-                }
-            }
+            showListOfVertices(withET);
+            adjacencyMatrix(weighted);
         }
-    }
 
-    /*public void checkAdjacency(boolean weighted){
-        int i;
-        int j;
-
-        if(numberOfEdges == 0)
-            System.out.println("\nNULL GRAPH (no edges)");  
+        // Show list of adjacent vertices
+        if(edges == null || edges.size() == 0)
+            System.out.println("\nNULL GRAPH (no edges)");
 
         else{
-            do{
-                System.out.print("From what vertex: ");
-                i = scanInt.nextInt();
-            }while(i > numberOfVertices || i <= 0);
-            
-            do{
-                System.out.print("To what vertex: ");
-                j = scanInt.nextInt();
-            }while(j > numberOfVertices || i < 0);
-    
-            if(weighted == false){
-                if(uwGraph[i-1][j-1] == "T")
-                    System.out.println("Vertex " + i + " and Vertex " + j + " are ADJACENT\n");
-                else System.out.println("Vertex " + i + " and Vertex " + j + " are NOT ADJACENT\n");
+            // NAIVE OR BINARY RELATION
+            System.out.println("\nBINARY RELATION:");
+            for(int i = 0; i < vertices.size(); i++){
+                for(int j = 0; j < vertices.size(); j++){
+                    if(vertices.get(i).adjacentVertices.contains(vertices.get(j)))
+                        System.out.print("(" + vertices.get(i).name + ", " + vertices.get(j).name + ") ");
+                }
             }
-    
-            else{
-                if(wGraph[i-1][j-1] > 0)
-                    System.out.println("Vertex " + i + " and Vertex " + j + " are ADJACENT\n");
-                else System.out.println("Vertex " + i + " and Vertex " + j + " are NOT ADJACENT\n");
+                
+            // ADJACENCY LIST
+            System.out.println("\n\nADJACENCY LIST:\n");
+            for(int i = 0; i < vertices.size(); i++){
+                System.out.print(vertices.get(i).name + " * ");
+                for(int j = 0; j < vertices.get(i).adjacentVertices.size(); j++){
+                    System.out.print("--> " + vertices.get(i).adjacentVertices.get(j).name + " ");
+                }
+                System.out.println();       
             }
         }
     }
+    
+    public void checkAdjacency(boolean withET){
+        Integer firstV = null;
+        Integer secondV = null;
 
-    public void checkConnectedness(boolean weighted){
-        int i;
-        int j;
-
-        if(numberOfEdges == 0)
-            System.out.println("\nNULL GRAPH (no edges)");
+        if(vertices == null || vertices.size() == 0)
+            System.out.println("NO VERTEX");
+        
+        else if(edges == null || edges.size() == 0)
+            System.out.println("NULL GRAPH! (no edges)");
         
         else{
+            showListOfVertices(withET);
+
+            // Ask for first vertex
             do{
-                System.out.print("From what vertex: ");
-                i = scanInt.nextInt();
-            }while(i > numberOfVertices || i <= 0);
-            
-            do{
-                System.out.print("To what vertex: ");
-                j = scanInt.nextInt();
-            }while(j > numberOfVertices || i < 0);
-    
-            if(weighted == false){
-                if(uwGraph[i-1][j-1] == "T")
-                    System.out.println("Vertex " + i + " and Vertex " + j + " are WEAKLY CONNECTED\n");
-                else System.out.println("Vertex " + i + " and Vertex " + j + " are NOT CONNECTED\n");
-            }
-    
-            else{
-                if(wGraph[i-1][j-1] > 0)
-                    System.out.println("Vertex " + i + " and Vertex " + j + " are WEAKLY CONNECTED\n");
-                else System.out.println("Vertex " + i + " and Vertex " + j + " are NOT CONNECTED\n");
-            }
-        }
-    }*/
-
-    public void insertEdge(boolean weighted){
-        int firstV = -1;
-        int secondV = -1;
-        boolean hasEdge = false;
-
-        numberOfEdges += 1;
-
-        // IF THE CURRENT NUMBER OF EDGES HAS REACHED THE MAXIMUM NUMBER OF EDGES FOR DIRECTED Graph
-        if(numberOfEdges > (numberOfVertices * (numberOfVertices - 1))){
-            System.out.println("MAXIMUM NUMBER OF EDGES REACHED!");
-            numberOfEdges -= 1;
-        }
-
-        else{
-            // Show list of vertices
-            System.out.print("Vertices: ");
-            for(int x = 0; x < vertices.size(); x++)
-                System.out.print(vertices.get(x).name + " ");
-            
-            // Checks if an edge already exists between two vertices
-            do{
-                // Ask for first vertex
-                do{
-                    System.out.print("\nFrom what vertex? ");
-                    String first = scanString.next();
-                    for(int i = 0; i < vertices.size(); i++){
-                        if(vertices.get(i).name.contains(first)){
-                            firstV = i;
-                        }
+                System.out.print("\nFrom what vertex? ");
+                String first = scanString.next();
+                for(int i = 0; i < vertices.size(); i++)
+                    if(vertices.get(i).name.matches(first)){
+                        firstV = i;
+                        break;
                     }
-                }while(firstV == -1);
+            }while(firstV == null);
 
-                // Ask for second vertex
-                do{
-                    System.out.print("To which vertex? ");
-                    String second = scanString.next();
-                    for(int i = 0; i < vertices.size(); i++){
-                        if(vertices.get(i).name.contains(second)){
-                            secondV = i;
-                            break;
-                        }
+            // Ask for second vertex
+            do{
+                System.out.print("To which vertex? ");
+                String second = scanString.next();
+                for(int i = 0; i < vertices.size(); i++){
+                    if(vertices.get(i).name.matches(second)){
+                        secondV = i;
+                        break;
                     }
-                }while(secondV == -1);
-
-                // Check if edge exists in unweighted graph
-                if(weighted == false){
-                    if(uwGraph[firstV][secondV] == "T")
-                        hasEdge = true;
-                    else hasEdge = false;
                 }
+            }while(secondV == null);
 
-                // Check if edge exists in weighted graph
-                else{
-                    if(wGraph[firstV][secondV] > 0)
-                        hasEdge = true;
-                    else hasEdge = false;
-                }
-            }while(hasEdge == true || firstV == secondV);
-
-            // Add edge for unweighted graph
-            if(weighted == false)
-                uwGraph[firstV][secondV] = "T";
-            
-            // Add edge for weigted graph
-            else{
-                // Ask for weight
-                int value;
-                do{
-                    System.out.print("Weight of Edge between " + vertices.get(firstV).name + " and " + vertices.get(secondV).name + ": ");
-                    value = scanInt.nextInt();                    
-                }while(value <= 0);
-
-                // Create new weighted edge
-                Edge edge = new Edge(vertices.get(firstV), vertices.get(secondV), value);
-                
-                if(edges == null)
-                    edges = new ArrayList<Edge>();
-
-                // Add new edge to list of edges
-                edges.add(edge);
-                wGraph[firstV][secondV] = edge.value;
+            if(vertices.get(firstV).adjacentVertices.contains(vertices.get(secondV))){
+                System.out.println("Vertex " + vertices.get(firstV).name + " and Vertex " + vertices.get(secondV).name + " are adjacent!");
+                System.out.println("Edge: (" + vertices.get(firstV).name + ", " + vertices.get(secondV).name + ")");
             }
-            // Add second vertex to adjacency list of the first vertex
-            vertices.get(firstV).addAdj(vertices.get(secondV));
-            zeroInDegreeVertices.remove(vertices.get(secondV));
 
-            System.out.println("\nAn edge is inserted");
+            else System.out.println("Vertex " + vertices.get(firstV).name + " and Vertex " + vertices.get(secondV).name + " are NOT adjacent!");
         }
     }
 
-    public void removeEdge(boolean weighted){
-        int firstV = -1;
-        int secondV = -1;
+    public void checkConnectedness(boolean withET){
+        Integer firstV = null;
+        Integer secondV = null;
+
+        if(vertices == null || vertices.size() == 0)
+            System.out.println("NO VERTEX");
+        
+        else if(edges == null || edges.size() == 0)
+            System.out.println("NULL GRAPH! (no edges)");
+        
+        else{
+            showListOfVertices(withET);
+
+            // Ask for first vertex
+            do{
+                System.out.print("\nFrom what vertex? ");
+                String first = scanString.next();
+                for(int i = 0; i < vertices.size(); i++)
+                    if(vertices.get(i).name.matches(first)){
+                        firstV = i;
+                        break;
+                    }
+            }while(firstV == null);
+
+            // Ask for second vertex
+            do{
+                System.out.print("To which vertex? ");
+                String second = scanString.next();
+                for(int i = 0; i < vertices.size(); i++){
+                    if(vertices.get(i).name.matches(second)){
+                        secondV = i;
+                        break;
+                    }
+                }
+            }while(secondV == null);
+
+            // do Breadth-First
+            boolean[] visited = new boolean[vertices.size()];
+            Queue<Vertex> queue = new LinkedList<Vertex>();
+            queue.add(vertices.get(firstV));
+            visited[firstV] = true;
+
+            while(queue.size() > 0){
+                Vertex dequeue = queue.remove();
+
+                Iterator<Vertex> list = dequeue.adjacentVertices.listIterator();
+
+                while(list.hasNext()){
+                    Vertex enqueue = list.next();
+                    while(visited[vertices.indexOf(enqueue)] == false){
+                        visited[vertices.indexOf(enqueue)] = true;
+                        
+                        if(vertices.indexOf(enqueue) == secondV) {
+                            System.out.println("Vertex " + vertices.get(firstV).name + " is connected to Vertex " + vertices.get(secondV).name);
+                            break;
+                        }
+                        else queue.add(enqueue);
+                    }
+                }
+            }
+
+            if(queue.isEmpty())
+                if(visited[secondV] == false)
+                    System.out.println("Vertex " + vertices.get(firstV).name + " is NOT connected to Vertex " + vertices.get(secondV).name);
+            
+        }
+    }
+    
+    public void insertEdge(boolean weighted, boolean withET){
+        Integer firstV = null;
+        Integer secondV = null;
+        boolean hasEdge = false;
+        int numberOfEdges = 0;
+
+        // If there are no vertices
+        if(vertices == null || vertices.size() == 0)
+            System.out.println("NO VERTEX");
+
+        // If there is at least one vertex
+        else{
+            showListOfVertices(withET);
+            if(edges != null && edges.size()> 0)
+                numberOfEdges = edges.size();
+
+            // CHECK IF THE CURRENT NUMBER OF EDGES HAS REACHED THE MAXIMUM NUMBER OF EDGES FOR UNDIRECTED GRAPH
+            if((numberOfEdges + 1) > ((vertices.size() * (vertices.size() - 1))/2))
+                System.out.println("MAXIMUM NUMBER OF EDGES REACHED!");
+            
+            else{
+                // Checks if an edge already exists between two vertices
+                do{
+                    // ASK FOR FIRST VERTEX
+                    do{
+                        System.out.print("\nFrom what vertex? ");
+                        String first = scanString.next();
+                        for(int i = 0; i < vertices.size(); i++)
+                            if(vertices.get(i).name.matches(first)){
+                                firstV = i;
+                                break;
+                            }
+                    }while(firstV == null);
+
+                    // Ask for second vertex
+                    do{
+                        System.out.print("To which vertex? ");
+                        String second = scanString.next();
+                        for(int i = 0; i < vertices.size(); i++)
+                            if(vertices.get(i).name.matches(second)){
+                                secondV = i;
+                                break;
+                            }
+                    }while(secondV == null);
+                
+                    // Check if edge exists in unweighted graph
+                    if(weighted == false){
+                        if(uwGraph[firstV][secondV] == "T")
+                            hasEdge = true;
+                        else {
+                            if(firstV != secondV){
+                                uwGraph[firstV][secondV] = "T";
+                                edge = new Edge(vertices.get(firstV), vertices.get(secondV));
+                                hasEdge = false;
+                            }
+                        }
+                    }
+
+                    // Check if edge exists in weighted graph
+                    else{
+                        if(wGraph[firstV][secondV] > 0)
+                            hasEdge = true;
+                        
+                        else {
+                            if(firstV != secondV){
+                                hasEdge = false;
+                                // Ask for weight
+                                Double value = null;
+                                do{
+                                    System.out.print("Weight of Edge between " + vertices.get(firstV).name + " and " + vertices.get(secondV).name + ": ");
+                                    String input = scanString.next();
+                    
+                                    try{
+                                        value = Double.parseDouble(input);
+                                    } catch (NumberFormatException e){value = null;}
+                                } while (value == null);
+
+                                // Create new edge
+                                edge = new Edge(vertices.get(firstV), vertices.get(secondV), value);
+                                wGraph[firstV][secondV] = value;
+                            }            
+                        }
+                    }
+
+                    if(hasEdge == true || firstV == secondV){
+                        firstV = null;
+                        secondV = null;
+                    }
+                }while(hasEdge == true || firstV == secondV);
+
+                // Add new edge to list of edges
+                if(edges == null)
+                    edges = new ArrayList<Edge>();
+                edges.add(edge);
+        
+                // Add vertex to Adjacency List of other vertex
+                vertices.get(firstV).addAdj(vertices.get(secondV));
+                vertices.get(secondV).addParent(vertices.get(firstV));
+                zeroInDegreeVertices.remove(vertices.get(secondV));
+                System.out.println("\nVertices: " + vertices.get(firstV).name + " and " + vertices.get(secondV).name);
+                System.out.println("An edge is inserted");
+            }   
+        }
+    }
+
+    public void removeEdge(boolean weighted, boolean withET){
+        Integer firstV = null;
+        Integer secondV = null;
+        boolean hasEdge = true;
 
         // If there are no edges
-        if(numberOfEdges == 0)
+        if(edges == null || edges.size() == 0)
             System.out.println("NULL GRAPH! (no edges)");
 
         // If there is at least one edge
         else{
-            boolean again = true;
+            // Show the current list of vertices
+            showListOfVertices(withET);
             // If there is no edge
             do{
                 // Ask for first vertex
                 do{
                     System.out.print("\nFrom what vertex? ");
                     String first = scanString.next();
-                    for(int i = 0; i < vertices.size(); i++){
-                        if(vertices.get(i).name.contains(first)){
+                    for(int i = 0; i < vertices.size(); i++)
+                        if(vertices.get(i).name.matches(first)){
                             firstV = i;
                             break;
                         }
-                    }
-                }while(firstV == -1);
+                }while(firstV == null);
             
                 // Ask for second vertex
                 do{
                     System.out.print("To which vertex? ");
                     String second = scanString.next();
-                    
                     for(int i = 0; i < vertices.size(); i++){
-                        if(vertices.get(i).name.contains(second)){
+                        if(vertices.get(i).name.matches(second)){
                             secondV = i;
                             break;
                         }
                     }
-                }while(secondV == -1);
+                }while(secondV == null);
         
-                // Unweighted Graph
-                if(weighted == false){
-                    // No edge
-                    if(uwGraph[firstV][secondV] == "F")
-                        System.out.println("NO EDGE EXISTS");
-                    // Edge exists
-                    else{
+                // If an Edge does exist
+                if(vertices.get(firstV).adjacentVertices.contains(vertices.get(secondV))){
+                    hasEdge = true;
+                    // Remove Edge in Adjacent Matrix
+                    if(weighted == false){
                         uwGraph[firstV][secondV] = "F";
-                        vertices.get(firstV).removeAdj(vertices.get(secondV)); 
-                        System.out.println("\nAn edge is removed");
-                        numberOfEdges -= 1;
-                        again = false;
+                        uwGraph[secondV][firstV] = "F";
                     }
+                    else if(weighted == true){
+                        wGraph[firstV][secondV] = 0;
+                        wGraph[secondV][firstV] = 0;
+                    }
+                }
+                // If there is no edge
+                else{
+                    System.out.println("NO EDGE EXISTS");
+                    hasEdge = false;    
                 }
 
-                // Weighted Graph
-                else{
-                    // No edge
-                    if(wGraph[firstV][secondV] == 0)
-                        System.out.println("NO EDGE EXISTS");
-                    // Edge exists
-                    else{
-                        wGraph[firstV][secondV] = 0;
-                        vertices.get(firstV).removeAdj(vertices.get(secondV));
-                        System.out.println("\nAn edge is removed");
-                        numberOfEdges -= 1;
-                        again = false;
-                    }
+                // Reset vertices if no edge exists
+                if(hasEdge == false){
+                    firstV = null;
+                    secondV = null;
                 }
-            }while(again == true);
+            }while(hasEdge == false);
+
+            // Remove in adjacency lists
+            vertices.get(firstV).removeAdj(vertices.get(secondV));
+            vertices.get(secondV).removeParent(vertices.get(firstV));
+            System.out.println("\nVertices: " + vertices.get(firstV).name + " and " + vertices.get(secondV).name);
+            System.out.println("An edge is removed");
+            // Check if second vertex has an in-degree of zero
+            if(vertices.get(secondV).parents != null && vertices.get(secondV).parents.size() == 0)
+                zeroInDegreeVertices.add(vertices.get(secondV));
+            
+            // Remove in list of edges
+            for(int k = 0; k < edges.size(); k++)
+                if(edges.get(k).first == vertices.get(firstV) && edges.get(k).second == vertices.get(secondV)) {
+                    edges.remove(k);
+                    break;
+                }
         }
     }
 
-    public void insertVertex(boolean weighted){
+    public void insertVertex(boolean weighted, boolean withET){
         boolean exists;
         String name;
-
-        numberOfVertices += 1;
+        String input;
+        Double time = null;
+        Vertex addVertex;
 
         // If there are no existing vertices
-        if(vertices == null){
+        if(vertices == null || vertices.size() == 0){
+            // Naming the vertex
             System.out.print("Name of Vertex: ");
             name = scanString.next();
-            vertices = new ArrayList<Node>();
-            zeroInDegreeVertices = new ArrayList<Node>();
+            vertices = new ArrayList<Vertex>();
+            zeroInDegreeVertices = new ArrayList<Vertex>();
             
             // Create an unweighted directed graph
-            if(weighted == false)
-                uwGraph = new String[numberOfVertices][numberOfVertices];
-
+            if(weighted == false){
+                uwGraph = new String[1][1];
+                uwGraph[0][0] = "F";
+            }
+            
             // Create a weighted directed graph
-            else
-                wGraph = new int[numberOfVertices][numberOfVertices];
+            else {
+                wGraph = new double[1][1];
+                wGraph[0][0] = 0;
+            }
         }
-
+        
         // If there is at least one vertex
         else{
             // Checks if name of vertex already exists
@@ -357,7 +391,7 @@ public class DGraph{
                 exists = false;
                 
                 for(int i = 0; i < vertices.size(); i++){
-                    if(vertices.get(i).name.contains(name))
+                    if(vertices.get(i).name.matches(name))
                         exists = true;
                 }
             }while(exists == true);
@@ -365,134 +399,223 @@ public class DGraph{
             // Adding new vertex to adjacency matrix -- Unweighted
             if(weighted == false){
                 String[][] uwTemp = uwGraph;
-                uwGraph = new String[numberOfVertices][numberOfVertices];
+                uwGraph = new String[vertices.size() + 1][vertices.size() + 1];
         
-                for(int i = 0; i < numberOfVertices; i++){
-                    uwGraph[i][numberOfVertices-1] = "F";
+                for(int i = 0; i < vertices.size() + 1; i++){
+                    uwGraph[i][vertices.size()] = "F";
+                    uwGraph[vertices.size()][i] = "F";
                 }
         
-                for(int i = 0; i < numberOfVertices-1; i++)
-                    for(int j = 0; j < numberOfVertices-1; j++)
-                        uwGraph[i][j] = uwTemp[i][j];   
+                for(int i = 0; i < vertices.size(); i++)
+                    for(int j = 0; j < vertices.size(); j++)
+                        uwGraph[i][j] = uwTemp[i][j];
             }
 
             // Adding new vertex to adjacency matrix -- Weighted
             else{
-                int[][] wTemp = wGraph;
-                wGraph = new int[numberOfVertices][numberOfVertices];
+                double[][] wTemp = wGraph;
+                wGraph = new double[vertices.size() + 1][vertices.size() + 1];
 
-                for(int i = 0; i < numberOfVertices; i++)
-                    wGraph[i][numberOfVertices-1] = 0;
+                for(int i = 0; i < vertices.size() + 1; i++){
+                    wGraph[i][vertices.size()] = 0;
+                    wGraph[vertices.size()][i] = 0;
+                }
         
-                for(int i = 0; i < numberOfVertices-1; i++)
-                    for(int j = 0; j < numberOfVertices-1; j++)
+                for(int i = 0; i < vertices.size(); i++)
+                    for(int j = 0; j < vertices.size(); j++)
                         wGraph[i][j] = wTemp[i][j];
             }
         }
         
+        // Create Vertex Object
+        // If all vertices should have execution time
+        if(withET == true){
+            // Ask for Execution Time
+            do{
+                System.out.print("Execution Time: ");
+                input = scanString.next();
+
+                try{
+                    time = Double.parseDouble(input);
+                } catch (NumberFormatException e){time = null;}
+            } while (time == null || time < 0);
+
+            addVertex = new Vertex(name, time);
+        }
+        
+        else addVertex = new Vertex(name);
+        
         // Add to list of vertices
-        Node addVertex = new Node(name);
         vertices.add(addVertex);
         zeroInDegreeVertices.add(addVertex);
         System.out.println("\nVertex " + name + " is inserted");
     }
 
-    public void removeVertex(boolean weighted){
+    public void removeVertex(boolean weighted, boolean withET){
         boolean vertexInList = false;
-        String vertex;
-
+        String vertexName;
+        int index = 0;
+    
         // If there are no vertices at all
-        if(numberOfVertices == 0)
-            System.out.println("\nNO VERTEX");
+        if(vertices == null || vertices.size() == 0)
+            System.out.println("NO VERTEX");
         
         // There is at least one vertex
-        else if(numberOfVertices > 0){
+        else if(vertices.size() > 0){
+            // Show the current list of vertices
+            showListOfVertices(withET);
+            
+            // Check if the vertex is in the list of vertices
             do{
                 System.out.print("What vertex? ");
-                vertex = scanString.next();
+                vertexName = scanString.next();
     
                 // Check if input is in the list of vertices
                 for(int i = 0; i < vertices.size(); i++){
-                    if(vertices.get(i).name.contains(vertex)){
+                    if(vertices.get(i).name.matches(vertexName)){
                         vertexInList = true;
-
-                        // Checks if other vertices are adjacent to input
-                        for(int j = 0; j < vertices.size(); j++){
-                            if(vertices.get(j).adjacentVertices.contains(vertices.get(i))){
-                                vertices.get(j).adjacentVertices.remove(vertices.get(i));
-                            }
-                        }
-                        
-                        // Removing the edges adjacent to the input from the list of edges
-                        if(weighted == true){
-                            for(int k = 0; k < edges.size(); k++){
-                                if(edges.get(k).first == vertices.get(i) || edges.get(k).second == vertices.get(i)){
-                                    edges.remove(k);
-                                    k = -1;
-                                    numberOfEdges -= 1;
-                                }
-                            }
-                        }
-                        
-                        else{
-                            for(int j = 0; j < vertices.size(); j++){
-                                if(vertices.get(j).adjacentVertices.contains(vertices.get(i))){
-                                    vertices.get(j).adjacentVertices.remove(vertices.get(i));
-                                }
-                                if(j == i)
-                                    vertices.get(j).adjacentVertices.clear();
-
-                            }
-                        }
-
-                        // Remove input from the list of vertices
-                        zeroInDegreeVertices.remove(vertices.get(i));
-                        vertices.remove(i);
-
-                        numberOfEdges = 0;
-                        for(int x = 0; x < vertices.size(); x++){
-                            numberOfEdges += vertices.get(x).adjacentVertices.size();
-                        }
-
-                        numberOfVertices -= 1;
-
-                        // Resetting vertices with in-degree of ZERO
-                        zeroInDegreeVertices = vertices;
-                        for(int x = 0; x < vertices.size(); x++)
-                            for(int y = 0; y < vertices.size(); y++)
-                                if(vertices.get(x).adjacentVertices.contains(vertices.get(y)))
-                                    zeroInDegreeVertices.remove(vertices.get(y));
-                    }                    
+                        index = i;
+                        break;
+                    }
                 }
-
-                if(vertexInList == true){
-                    if(weighted == false)
-                        wGraph = new int[numberOfVertices][numberOfVertices];
-                    else
-                        uwGraph = new String[numberOfVertices][numberOfVertices];
-                }
-
-                else
+    
+                if(vertexInList == false)
                     System.out.println("Vertex does not exist");
-            }while(vertexInList == false);
+            } while (vertexInList == false);
+    
+            // Checks if other vertices are adjacent to input
+            for(int j = 0; j < vertices.size(); j++){
+                if((vertices.get(j).adjacentVertices != null && vertices.get(j).adjacentVertices.size() > 0) || (vertices.get(j).parents != null && vertices.get(j).parents.size() > 0)){
+                    if(vertices.get(j).adjacentVertices.contains(vertices.get(index)))
+                        vertices.get(j).removeAdj(vertices.get(index));
+                    else if(vertices.get(j).parents.contains(vertices.get(index))){
+                        vertices.get(j).removeParent(vertices.get(index));
+                        if(vertices.get(j).parents.size() == 0)
+                            zeroInDegreeVertices.add(vertices.get(j));
+                    }
+    
+                    // Removing the edges adjacent to the input from the list of edges    
+                    if(edges != null || edges.size() > 0){
+                        for(int k = 0; k < edges.size(); k++){
+                            if(edges.get(k).first == vertices.get(index) || edges.get(k).second == vertices.get(index)){
+                                edges.remove(k);
+                                k = -1;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Remove input from the list of vertices
+            if(zeroInDegreeVertices.contains(vertices.get(index)))
+                zeroInDegreeVertices.remove(zeroInDegreeVertices.indexOf(vertices.get(index)));
+            vertices.remove(index);
 
-            System.out.println("\nVertex "+ vertex + " is removed");
+            // Reset Matrix
+            defaultMatrix(weighted);
+    
+            System.out.println("\nVertex "+ vertexName + " is removed");
         }
     }
 
-    public void breadthFirst(){
+    public void showListOfVertices(boolean withET){
+        System.out.print("\nVertices In Order: (");
+        for(int i = 0; i < vertices.size(); i++){
+            System.out.print(vertices.get(i).name);
+            // If there is an execution time
+            if(withET == true)
+                System.out.print(": " + vertices.get(i).time);
+    
+            if(i < vertices.size() - 1)
+                System.out.print(", ");
+
+            // If it's the last vertex
+            else System.out.print(")\n");
+        }
+
+        // List of Vertices with in-degree of zero
+        if(zeroInDegreeVertices.size() > 0){
+            System.out.print("Vertices with in-degree of ZERO: (");
+            for(int x = 0; x < zeroInDegreeVertices.size() - 1; x++)
+                System.out.print(zeroInDegreeVertices.get(x).name +", ");
+            System.out.print(zeroInDegreeVertices.get(zeroInDegreeVertices.size() - 1).name + ")\n");
+        }
+    }
+
+    public void getVertexSize(){
+        System.out.print("Number of Vertices: ");
+        if(vertices == null)
+            System.out.println("0");
+        else System.out.println(vertices.size());
+    }
+
+    public void getEdgeSize(){
+        System.out.print("Number of Edges: ");
+        if(edges == null)
+            System.out.println("0");
+        else System.out.println(edges.size());
+    }
+
+    public void adjacencyMatrix(boolean weighted){
+        // ADJACENCY MATRIX --- Default display of graph
+        System.out.println("\nADJACENCY MATRIX: (Order is based on list of vertices)\n");
+        
+        for(int i = 0; i < vertices.size(); i++){
+            System.out.print("\t");
+
+            for(int j = 0; j < vertices.size(); j++){
+                // For Unweighted Graph
+                if(weighted == false){
+                    if(edges != null && edges.size() > 0){
+                        for(int k = 0; k < edges.size(); k++)
+                            if(edges.get(k).first == vertices.get(i) && edges.get(k).second == vertices.get(j))
+                                uwGraph[i][j] = "T";
+                    }            
+                    System.out.print("[" + uwGraph[i][j] + "]");
+                }
+                
+                // For Weighted Graph
+                else{
+                    if(edges != null && edges.size() > 0){
+                        for(int k = 0; k < edges.size(); k++)
+                            if(edges.get(k).first == vertices.get(i) && edges.get(k).second == vertices.get(j))
+                                wGraph[i][j] = edges.get(k).value;
+                    }
+                    System.out.print("[" + wGraph[i][j] + "]");
+                }
+            }
+            System.out.println();
+        }
+        System.out.println("");
+    }
+    
+    public void defaultMatrix(boolean weighted){
+        if(weighted == false){
+            uwGraph = new String[vertices.size()][vertices.size()];
+            for(int i = 0; i < vertices.size(); i++)
+                for(int j = 0; j < vertices.size(); j++)
+                    uwGraph[i][j] = "F";
+        }
+
+        else {
+            wGraph = new double[vertices.size()][vertices.size()];
+            for(int i = 0; i < vertices.size(); i++)
+                for(int j = 0; j < vertices.size(); j++)
+                    wGraph[i][j] = 0;
+        }
+    }
+    
+    // Lab 2
+    /*public void breadthFirst(boolean withET){
         boolean[] visited;
         boolean exists = false;
         boolean allAreVisited = true;
-        LinkedList<String> queue = new LinkedList<String>();
-        int index = 0;
-        
-        // If there is at least one vertex
-        if(numberOfVertices > 0){
-            showListOfVertices();
+        LinkedList<Vertex> queue = new LinkedList<Vertex>();
+
+        if(vertices.size() > 0){
+            showListOfVertices(withET);
             visited = new boolean[vertices.size()];
 
-            // Checks if vertex exists
             do{
                 // Ask for Source Vertex
                 System.out.print("\nChoose Source Vertex: ");
@@ -501,60 +624,56 @@ public class DGraph{
                 for(int i = 0; i < vertices.size(); i++){
                     if(vertices.get(i).name.contains(vertex)){
                         exists = true;
-                        visited[i] = true;  // Marked as visited vertex
-                        index = i;
-                        queue.add(vertices.get(i).name); // Enqueue source vertex in queue
+                        visited[i] = true;
+                        queue.add(vertices.get(i));
                         break;
                     }
                 }
 
                 if(exists == true){
-                    // BFS until all vertices are visited
                     do{
                         while(queue.size() > 0){
-                            String print = queue.poll();
-                            System.out.print(print + " ");
-            
-                            Iterator<Node> list = vertices.get(index).adjacentVertices.listIterator();
-                           
+                            Vertex dequeue = queue.remove();
+                            System.out.print(dequeue.name + " ");
+    
+                            Iterator<Vertex> list = dequeue.adjacentVertices.listIterator();
+    
                             while(list.hasNext()){
-                                Node i = list.next();
-                                
-                                if(visited[vertices.indexOf(i)] == false){
-                                    visited[vertices.indexOf(i)] = true;
-                                    index = vertices.indexOf(i);
-                                    queue.add(i.name);
+                                Vertex enqueue = list.next();
+                                while(visited[vertices.indexOf(enqueue)] == false){
+                                    queue.add(enqueue);
+                                    visited[vertices.indexOf(enqueue)] = true;
                                 }
                             }
                         }
-
-                        // In Case Queue is Empty but there are unvisited vertices
-                        allAreVisited = true;
-                        for(int i = 0; i < visited.length; i++){
-                            if(visited[i] == false){
-                                allAreVisited = false;
-                                visited[i] = true;
-                                index = i;
-                                queue.add(vertices.get(i).name); // Enqueue unvisited vertex
-                                break;
-                            }
+                        
+                        if(queue.isEmpty()){
+                            allAreVisited = true;
+                            for(int i = 0; i < visited.length; i++)
+                                if(visited[i] == false){
+                                    allAreVisited = false;
+                                    queue.add(vertices.get(i));
+                                    visited[i] = true;
+                                    break;
+                                }
                         }
-                    }while(allAreVisited != true);
+                    }while(allAreVisited == false);
                 }
             }while(exists == false);
+
         }
 
         else System.out.println("\nNO VERTEX\n");
     }
 
-    public void depthFirst(){
+    public void depthFirst(boolean withET){
         boolean[] visited;
         boolean exists = false;
         boolean allAreVisited = true;
-        Stack<Node> stack = new Stack<Node>();
+        Stack<Vertex> stack = new Stack<Vertex>();
 
-        if(numberOfVertices > 0){
-            showListOfVertices();
+        if(vertices.size() > 0){
+            showListOfVertices(withET);
             visited = new boolean[vertices.size()];
 
             do{
@@ -574,14 +693,14 @@ public class DGraph{
                 if(exists == true){
                     do{
                         while(stack.size() > 0){
-                            Node pop = stack.pop();
+                            Vertex pop = stack.pop();
                             System.out.print(pop.name + " ");
     
-                            Iterator<Node> list = pop.adjacentVertices.listIterator();
+                            Iterator<Vertex> list = pop.adjacentVertices.listIterator();
     
                             while(list.hasNext()){
-                                Node push = list.next();
-                                if(visited[vertices.indexOf(push)] == false){
+                                Vertex push = list.next();
+                                while(visited[vertices.indexOf(push)] == false){
                                     stack.push(push);
                                     visited[vertices.indexOf(push)] = true;
                                 }
@@ -594,22 +713,15 @@ public class DGraph{
                                 if(visited[i] == false){
                                     allAreVisited = false;
                                     stack.push(vertices.get(i));
+                                    visited[i] = true;
                                     break;
                                 }
                         }
                     }while(allAreVisited == false);
                 }
             }while(exists == false);
-
         }
-
         else System.out.println("\nNO VERTEX\n");        
-    }
+    }*/
 
-    public void showListOfVertices(){
-        System.out.print("\nVertices In Order: (");
-        for(int i = 0; i < vertices.size() - 1; i++)
-            System.out.print(vertices.get(i).name + ", ");
-        System.out.print(vertices.get(vertices.size()-1).name + ")\n");
-    }
 }
