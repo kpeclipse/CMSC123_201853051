@@ -145,10 +145,10 @@ public class GraphTester{
                     break;
 
                 // Lab 4
-                /*case 13:
+                case 13:
                     if(d == true)
                         new TopologicalSort(dGraph);
-                    break;*/
+                    break;
 
                 // Lab 5 and Lab 6
                 /*case 14:
