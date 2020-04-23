@@ -1,100 +1,86 @@
 import java.util.*;
 
 public class SSUPL{
-    int[] sequence;
+    Integer[] sequence;
     boolean[] visited;
     Scanner scanString = new Scanner(System.in);
-    Node input;
+    Vertex input;
     boolean exists = false;
     
-    public SSUPL (DGraph G){
-        do{        
-            System.out.print("Source Vertex: ");
-            String source = scanString.next();
+    // For Directed Graph
+    public SSUPL (DGraph G, boolean withET){
+        G.showListOfVertices(withET);
+        input = askSourceVertex(G.vertices);
+        breadthFirst(G.vertices, input);
+        showSequence(G.vertices);
+    }
 
-            for(int i = 0; i < G.vertices.size(); i++){
-                if(G.vertices.get(i).name.contains(source)){
-                    input = G.vertices.get(i);
-                    exists = true;
-                    break;
-                }
-            }
-        }while(exists == false);
+    // For Undirected Graph
+    public SSUPL(UGraph G, boolean withET){
+        G.showListOfVertices(withET);
+        input = askSourceVertex(G.vertices);
+        breadthFirst(G.vertices, input);
+        showSequence(G.vertices);
+    }
 
-        dSSUPL(G, input);
+    // Printing of SSUPL
+    public void showSequence(ArrayList<Vertex> vertices){
+        System.out.println("\nSingle-source Unweighted Path Length");
         for(int i = 0; i < sequence.length; i++){
-            System.out.print(sequence[i] + " ");
+            if(sequence[i] == null)
+                System.out.println("From " + input.name + " to " + vertices.get(i).name +": infinity");
+            else System.out.println("From " + input.name + " to " + vertices.get(i).name +": " + sequence[i]);
         }
     }
 
-    public SSUPL(UGraph G){
+    // Ask for source vertex
+    public Vertex askSourceVertex(ArrayList<Vertex> listOfVertices){
+        Integer index = null;
         do{        
             System.out.print("Source Vertex: ");
             String source = scanString.next();
 
-            for(int i = 0; i < G.vertices.size(); i++){
-                if(G.vertices.get(i).name.contains(source)){
-                    input = G.vertices.get(i);
+            for(int i = 0; i < listOfVertices.size(); i++){
+                if(listOfVertices.get(i).name.matches(source)){
+                    index = i;
                     exists = true;
                     break;
                 }
             }
         }while(exists == false);
+
+        return listOfVertices.get(index);
+    }
+
+    // BFS
+    public void breadthFirst (ArrayList<Vertex> vertices, Vertex source){
+        sequence = new Integer[vertices.size()];
         
-        uSSUPL(G, input);
-        for(int i = 0; i < sequence.length; i++){
-            System.out.print(sequence[i] + " ");
+        // Set to infinity
+        for(int i = 0; i < vertices.size(); i++){
+            if(i == vertices.indexOf(source))
+                sequence[i] = 0;
+            else sequence[i] = null;
         }
-    }
 
-    public void dSSUPL (DGraph G, Node source){
-        sequence = new int[G.vertices.size()];
-        visited = new boolean[G.vertices.size()];
+        visited = new boolean[vertices.size()];
+        Queue<Vertex> queue = new LinkedList<Vertex>();
+        queue.add(source);
+        visited[vertices.indexOf(source)] = true;
 
-        sequence[G.vertices.indexOf(source)] = 0;
+        while(queue.size() > 0){
+            Vertex dequeue = queue.remove();
 
-        Queue<Node> breadthFirst = new LinkedList<Node>();
-        breadthFirst.add(source);
-
-        while(breadthFirst.size() > 0){
-            Node current = breadthFirst.remove();
-            visited[G.vertices.indexOf(current)] = true;
-
-            ArrayList<Node> list = current.adjacentVertices;
-
-            for(int i = 0; i < list.size(); i ++){
-                if(visited[G.vertices.indexOf(list.get(i))] == false){
-                    if(sequence[G.vertices.indexOf(list.get(i))] == 0 )
-                        sequence[G.vertices.indexOf(list.get(i))] = sequence[G.vertices.indexOf(current)] + 1;
-                    
-                    breadthFirst.add(G.vertices.get(G.vertices.indexOf(list.get(i))));
-                }                    
-            }
-        }
-    }
-
-    public void uSSUPL (UGraph G, Node source){
-        sequence = new int[G.vertices.size()];
-        visited = new boolean[G.vertices.size()];
-
-        sequence[G.vertices.indexOf(source)] = 0;
-
-        Queue<Node> breadthFirst = new LinkedList<Node>();
-        breadthFirst.add(source);
-
-        while(breadthFirst.size() > 0){
-            Node current = breadthFirst.remove();
-            visited[G.vertices.indexOf(current)] = true;
-
-            ArrayList<Node> list = current.adjacentVertices;
-
-            for(int i = 0; i < list.size(); i ++){
-                if(visited[G.vertices.indexOf(list.get(i))] == false){
-                    if(sequence[G.vertices.indexOf(list.get(i))] == 0 )
-                        sequence[G.vertices.indexOf(list.get(i))] = sequence[G.vertices.indexOf(current)] + 1;
-                    
-                    breadthFirst.add(G.vertices.get(G.vertices.indexOf(list.get(i))));
-                }                    
+            Iterator<Vertex> list = dequeue.adjacentVertices.listIterator();
+    
+            while(list.hasNext()){
+                Vertex enqueue = list.next();
+                while(visited[vertices.indexOf(enqueue)] == false){
+                    if(sequence[vertices.indexOf(enqueue)] == null || sequence[vertices.indexOf(enqueue)] == 0)
+                    sequence[vertices.indexOf(enqueue)] = sequence[vertices.indexOf(dequeue)] + 1;
+                    queue.add(enqueue);
+                    visited[vertices.indexOf(enqueue)] = true;
+                }
             }
         }
     }

@@ -43,11 +43,11 @@ public class GraphTester{
                 System.out.println("9 - Remove a vertex");
                 
                 // Lab 2
-                /*System.out.println("10 - Breadth-first");
-                System.out.println("11 - Depth-first");*/
+                System.out.println("10 - Breadth-first");
+                System.out.println("11 - Depth-first");
 
                 // Lab 3
-                /*System.out.println("12 - SSUPL");*/
+                System.out.println("12 - SSUPL");
 
                 // Labs 4 5 6 7
                 /*if(d == true){
@@ -121,7 +121,7 @@ public class GraphTester{
                     break;
                 
                 // Lab 2
-                /*case 10:
+                case 10:
                     if(d == false)
                         uGraph.breadthFirst(e);
                     else dGraph.breadthFirst(e);
@@ -130,10 +130,10 @@ public class GraphTester{
                     if(d == false)
                         uGraph.depthFirst(e);
                     else dGraph.depthFirst(e);
-                    break;*/
+                    break;
                
                 // Lab 3
-                /*case 12:
+                case 12:
                 // If graph is unweighted
                     if(w == false){
                         if(d == false && uGraph.vertices != null && uGraph.vertices.size() > 0)
@@ -142,7 +142,7 @@ public class GraphTester{
                             new SSUPL(dGraph, e);
                     }
                     else System.out.print("GRAPH IS WEIGHTED!");
-                    break;*/
+                    break;
 
                 // Lab 4
                 /*case 13:
